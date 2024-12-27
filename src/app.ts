@@ -1,5 +1,6 @@
 import app from "./server";
+import config from "./config";
 
-app.listen(3005, () => {
-  console.log(`hello on http://localhost:3005`);
+app.listen(config.port, () => {
+  console.log(`hello on http://localhost:${config.port}`);
 });
