@@ -1,6 +1,8 @@
 import express from "express";
 import morgan from "morgan";
 
+import { createNewUser, signIn } from "./handlers/users";
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -11,5 +13,8 @@ app.get("/", (req, res) => {
   res.status(200);
   res.json({ message: "hello" });
 });
+
+app.post("/user", createNewUser);
+app.post("/signin", signIn);
 
 export default app;
