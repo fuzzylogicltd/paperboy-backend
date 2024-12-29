@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import config from "../config";
 
 export const comparePasswords = (password, hash) => {
-  return bcrypt.comparePasswords(password, hash);
+  return bcrypt.compare(password, hash);
 };
 
 export const hashPassword = (password) => {
@@ -37,11 +37,11 @@ export const protect = (req, res, next) => {
   }
 
   try {
-    const user = jwt.verify(token, config.jwt);
+    const user = jwt.verify(token, config.secrets.jwt);
     req.user = user;
     next();
   } catch (e) {
     res.status(401);
-    res.json({ message: "not valid token " });
+    res.json({ message: "not valid token" });
   }
 };

@@ -38,7 +38,7 @@ model Subscription {
   user User @relation(fields: [userId], references: [id])
   feed Feed @relation(fields: [feedId], references: [id])
 
-  @@id([userId, feedId])
+  @@id(name: "subscriptionId", [userId, feedId])
 }
 
 model Article {
@@ -66,6 +66,6 @@ model Read {
   article Article @relation(fields: [articleId], references: [id])
   user User @relation(fields: [userId], references: [id])
 
-  @@id([articleId, userId])
+  @@id(name: "readId", [articleId, userId])
 
 }
