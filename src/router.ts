@@ -6,6 +6,13 @@ import {
   getArticle,
   updateArticle,
 } from "./handlers/articles";
+import {
+  addSubscription,
+  deleteSubscription,
+  getAllSubscriptions,
+  updateSubscription,
+} from "./handlers/subscriptions";
+import { findOrCreateFeed } from "./modules/middleware";
 
 const router = Router();
 
@@ -29,14 +36,18 @@ router.put("/articles/:id", updateArticle);
 
 // Get all Subscriptions (+feed info) = FeedId, Name, URL, Tags
 // GET /subscriptions
+router.get("/subscriptions", getAllSubscriptions);
 
 // Post to Subscription (add Sub) - send URL, Tags, CustomFeedName
 // POST /subscriptions/:id
+router.post("/subscriptions", findOrCreateFeed, addSubscription);
 
 // Put to Subscription (edit Sub) - send URL, Tags, CustomFeedName
 // PUT /subscriptions/:id
+router.put("/subscriptions/:id", updateSubscription);
 
 // Delete subscription by id
 // DELETE /subscriptions/:id
+router.delete("/subscriptions/:id", deleteSubscription);
 
 export default router;
