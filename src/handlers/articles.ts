@@ -3,7 +3,7 @@ import prisma from "../db";
 const PAGE_SIZE = 10;
 
 export const getAllArticles = async (req, res) => {
-  const pageCursor = req.body.pageCursor;
+  const pageCursor = req.body.pageCursor ?? 0;
 
   const reads = await prisma.read.findMany({
     take: PAGE_SIZE,
@@ -25,7 +25,7 @@ export const getAllArticles = async (req, res) => {
   const lastPostInResults = reads[PAGE_SIZE - 1];
 
   res.status(200);
-  res.json({ data: reads, pageCursor: lastPostInResults.articleId });
+  res.json({ data: reads, pageCursor: lastPostInResults?.articleId ?? null });
 };
 
 export const getArticlesByFeed = async (req, res) => {
