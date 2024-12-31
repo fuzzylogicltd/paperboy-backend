@@ -12,17 +12,18 @@ import {
   getAllSubscriptions,
   updateSubscription,
 } from "./handlers/subscriptions";
-import { findOrCreateFeed } from "./modules/middleware";
+import { findOrCreateFeed } from "./middleware/findOrCreateFeed";
+import { populateManyFeeds, populateOneFeed } from "./middleware/populateFeeds";
 
 const router = Router();
 
 // Get all from Read+Article (desc, paginated) = Title, URL, DatePublished, Image, ReadOn, Starred
 // GET /articles
-router.get("/articles", getAllArticles);
+router.get("/articles", populateManyFeeds, getAllArticles);
 
 // Get all from Read+Article by FeedId (desc, paginated) = Title, URL, DatePublished, Image, ReadOn, Starred
 // GET /articles/feed/:id
-router.get("/articles/feed/:id", getArticlesByFeed);
+router.get("/articles/feed/:id", populateOneFeed, getArticlesByFeed);
 
 // Get single Article by ArticleId
 // GET /articles/:id
