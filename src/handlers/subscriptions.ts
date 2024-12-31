@@ -23,10 +23,20 @@ export const getAllSubscriptions = async (req, res) => {
 };
 
 export const addSubscription = async (req, res) => {
-  const subscription = await prisma.subscription.create({
-    data: {
+  const subscription = await prisma.subscription.upsert({
+    where: {
+      subscriptionId: {
+        userId: req.user.id,
+        feedId: req.feed.id,
+      },
+    },
+    update: {
+      customFeedName: req.body.customFeedName,
+      tags: req.body.tags,
+    },
+    create: {
       userId: req.user.id,
-      feedId: req.feed.id, // will be inserted by middleware
+      feedId: req.feed.id,
       customFeedName: req.body.customFeedName,
       tags: req.body.tags,
       subscribedFrom: new Date(),
