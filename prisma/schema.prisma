@@ -46,7 +46,7 @@ model Article {
   feedId Int
 
   title String
-  url String
+  url String @unique
   datePublished DateTime
   body String
   description String?
