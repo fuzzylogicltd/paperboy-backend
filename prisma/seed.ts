@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 const prisma = new PrismaClient();
 
+import { testFeeds } from "./testFeeds.js";
+
 function getRandom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -21,11 +23,11 @@ async function main() {
 
   // Feeds
   const feedIds = [];
-  for (let i = 0; i < 20; i++) {
+  for (const testFeed of testFeeds) {
     const feed = await prisma.feed.create({
       data: {
-        name: faker.book.title(),
-        url: faker.internet.url(),
+        name: testFeed.title,
+        url: testFeed.url,
       },
     });
     feedIds.push(feed.id);
