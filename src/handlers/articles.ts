@@ -1,19 +1,21 @@
 import prisma from "../db";
 
-const PAGE_SIZE = 10;
+const ITEMS_PER_PAGE = 10;
 
 export const getAllArticles = async (req, res) => {
   const pageCursor = req.body.pageCursor ?? 0;
 
   const reads = await prisma.read.findMany({
-    take: PAGE_SIZE,
-    skip: pageCursor ? 1 : 0,
-    cursor: {
-      readId: {
-        userId: req.user.id,
-        articleId: pageCursor,
+    take: ITEMS_PER_PAGE,
+    ...(pageCursor && {
+      skip: pageCursor ? 1 : 0,
+      cursor: {
+        readId: {
+          userId: req.user.id,
+          articleId: pageCursor,
+        },
       },
-    },
+    }),
     where: {
       userId: req.user.id,
     },
@@ -22,7 +24,7 @@ export const getAllArticles = async (req, res) => {
     },
   });
 
-  const lastPostInResults = reads[PAGE_SIZE - 1];
+  const lastPostInResults = reads[ITEMS_PER_PAGE - 1];
 
   res.status(200);
   res.json({ data: reads, pageCursor: lastPostInResults?.articleId ?? null });
@@ -30,8 +32,19 @@ export const getAllArticles = async (req, res) => {
 
 export const getArticlesByFeed = async (req, res) => {
   const feedId = Number(req.params.id);
+  const pageCursor = req.body.pageCursor ?? 0;
 
   const reads = await prisma.read.findMany({
+    take: ITEMS_PER_PAGE,
+    ...(pageCursor && {
+      skip: pageCursor ? 1 : 0,
+      cursor: {
+        readId: {
+          userId: req.user.id,
+          articleId: pageCursor,
+        },
+      },
+    }),
     where: {
       userId: req.user.id,
       article: {
@@ -43,8 +56,10 @@ export const getArticlesByFeed = async (req, res) => {
     },
   });
 
+  const lastPostInResults = reads[ITEMS_PER_PAGE - 1];
+
   res.status(200);
-  res.json({ data: reads });
+  res.json({ data: reads, pageCursor: lastPostInResults?.articleId ?? null });
 };
 
 export const getArticle = async (req, res) => {
