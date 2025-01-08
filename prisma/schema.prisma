@@ -21,6 +21,7 @@ model Feed {
   id        Int   @id @default(autoincrement())
   createdAt DateTime @default(now())
 
+  lastFetched DateTime?
   name String
   url String @unique
   subscriptions Subscription[]

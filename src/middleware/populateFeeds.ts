@@ -1,13 +1,18 @@
+import { Article } from "@prisma/client";
 import prisma from "../db";
 import { XMLParser } from "fast-xml-parser";
 import got from "got";
+
+const FIVE_MINUTES_AGO = new Date(Date.now() - 5 * 60 * 1000);
 
 export const populateOneFeed = async (req, res, next) => {
   const feedId = Number(req.params.id);
   const feed = await prisma.feed.findFirst({
     where: {
       id: feedId,
-      // TODO: add rate limit based on last fetched date
+      lastFetched: {
+        lte: FIVE_MINUTES_AGO,
+      },
     },
     select: {
       url: true,
@@ -23,12 +28,16 @@ export const populateOneFeed = async (req, res, next) => {
     },
   });
 
-  const newArticles = await fetchArticlesFromRSS(feed.url, feedId);
+  if (feed) {
+    const newArticles = await fetchArticlesFromRSS(feed.url, feedId);
 
-  await prisma.article.createMany({
-    data: newArticles,
-    skipDuplicates: true,
-  });
+    await prisma.article.createMany({
+      data: newArticles,
+      skipDuplicates: true,
+    });
+
+    updateLastFetchedDate(feedId);
+  }
 
   next();
 };
@@ -41,7 +50,9 @@ export const populateManyFeeds = async (req, res, next) => {
           userId: req.user.id,
         },
       },
-      // TODO: add rate limit based on last fetched date
+      lastFetched: {
+        lte: FIVE_MINUTES_AGO,
+      },
     },
     select: {
       id: true,
@@ -65,12 +76,17 @@ export const populateManyFeeds = async (req, res, next) => {
       data: newArticles,
       skipDuplicates: true,
     });
+
+    updateLastFetchedDate(feed.id);
   });
 
   next();
 };
 
-async function fetchArticlesFromRSS(url, feedId) {
+async function fetchArticlesFromRSS(
+  url: string,
+  feedId: number
+): Promise<Article[]> {
   const buffer = await got(url).buffer();
 
   const parser = new XMLParser({
@@ -105,4 +121,15 @@ async function fetchArticlesFromRSS(url, feedId) {
   });
 
   return formattedItems;
+}
+
+async function updateLastFetchedDate(feedId) {
+  await prisma.feed.update({
+    where: {
+      id: feedId,
+    },
+    data: {
+      lastFetched: new Date(),
+    },
+  });
 }
