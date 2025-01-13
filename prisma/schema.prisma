@@ -45,6 +45,7 @@ model Subscription {
 model Article {
   id Int @id @default(autoincrement())
   feedId Int
+  retrievedAt DateTime @default(now())
 
   title String
   url String @unique
