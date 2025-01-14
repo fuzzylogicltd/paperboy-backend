@@ -83,10 +83,13 @@ export const populateManyFeeds = async (req, res, next) => {
   next();
 };
 
-async function fetchArticlesFromRSS(
-  url: string,
-  feedId: number
-): Promise<Article[]> {
+const FEED_FORMAT = {
+  rss: "rss",
+  rdf: "rdf",
+  atom: "atom",
+};
+
+async function fetchArticlesFromRSS(url: string, feedId: number) {
   const buffer = await got(url).buffer();
 
   const parser = new XMLParser({
@@ -96,27 +99,49 @@ async function fetchArticlesFromRSS(
   const feed = await parser.parse(buffer);
 
   let items = [];
-
-  // TODO: refactor below this line ------
+  let feedFormat = "unknown";
 
   if (feed.feed) {
-    // atom
-    items = feed.feed.entry;
-  } else {
-    // rss
-    items = feed.rss.channel.item;
+    feedFormat = FEED_FORMAT.atom;
+  } else if (feed.rss) {
+    feedFormat = FEED_FORMAT.rss;
+  } else if (feed.rdf) {
+    feedFormat = FEED_FORMAT.rdf;
+  }
+
+  switch (feedFormat) {
+    case FEED_FORMAT.atom:
+      items = feed.feed.entry;
+      break;
+    case FEED_FORMAT.rss:
+      items = feed.rss.channel.item;
+      break;
+    case FEED_FORMAT.rdf:
+      items = feed.rdf.channel.item;
+      break;
+    case "unknown":
+      throw new Error("Unrecognized feed format on " + url);
   }
 
   const formattedItems = items.map((item) => {
-    const formattedDate = new Date(item.pubDate ?? item.updated);
+    if (feedFormat === FEED_FORMAT.atom) {
+      return {
+        feedId: feedId,
+        title: item.title.toString(),
+        url: item.link["@_href"],
+        description: "", // atom feeds don't provide item description
+        datePublished: new Date(item.updated),
+        body: item.summary["#text"] ?? "",
+      };
+    }
 
     return {
       feedId: feedId,
-      title: item.title,
-      url: item.link["@_href"] ?? item.link,
+      title: item.title.toString(),
+      url: item.link,
       description: item.description ?? "",
-      datePublished: formattedDate,
-      body: item["content:encoded"] ?? item.summary["#text"] ?? "",
+      datePublished: new Date(item.pubDate),
+      body: item["content:encoded"] ?? "",
     };
   });
 

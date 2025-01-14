@@ -1,7 +1,7 @@
 import prisma from "../db";
 
 export const addReads = async (req, res, next) => {
-  const feedIds = await getFeedIds(req);
+  const feedIds = await getFeedIdForCurrentUser(req);
   const userId = req.user.id;
 
   feedIds.forEach(async (feedId) => {
@@ -38,16 +38,21 @@ export const addReads = async (req, res, next) => {
   });
 };
 
-const getFeedIds = async (req) => {
-  if (req.params.id) {
-    return [req.params.id];
-  }
+const getFeedIdForCurrentUser = async (req) => {
+  const feedId = Number(req.params.id);
+
+  // if we have feedId from query params we still run it through a query to
+  // make sure the user is subscribed to it, otherwise they shouldn't have access
+  // And if there's no feedId in the query, we return all subscriptions for that user
 
   const feeds = await prisma.feed.findMany({
     where: {
       subscriptions: {
         some: {
           userId: req.user.id,
+          ...(feedId && {
+            feedId: feedId,
+          }),
         },
       },
     },
