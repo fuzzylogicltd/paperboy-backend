@@ -33,9 +33,9 @@ export const addReads = async (req, res, next) => {
       data: readData,
       skipDuplicates: true,
     });
-
-    next();
   });
+
+  next();
 };
 
 const getFeedIdForCurrentUser = async (req) => {
