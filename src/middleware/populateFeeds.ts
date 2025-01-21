@@ -91,7 +91,7 @@ export const populateManyFeeds = async (req, res, next) => {
 };
 
 async function fetchArticlesFromRSS(url: string, feedId: number) {
-  const buffer = await got(url).buffer();
+  const buffer = (await got(url)).body;
 
   const feed = parseFeed(buffer);
 
