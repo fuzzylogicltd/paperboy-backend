@@ -1,12 +1,12 @@
 {
   "name": "paperboy",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/app.js",
   "type": "module",
   "scripts": {
-    "start": "node dist/src/index.js",
+    "start": "node dist/src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch src/index.js",
+    "dev": "tsx watch src/app.js",
     "build": "tsc && tsc-alias -p tsconfig.json"
   },
   "prisma": {
