@@ -3,13 +3,10 @@ import merge from "lodash.merge";
 import * as local from "./local";
 import * as prod from "./prod";
 
-process.env.NODE_ENV = process.env.NODE_ENV || "development";
-const stage = process.env.STAGE || "local";
+const stage = process.env.STAGE === "production" ? "production" : "local";
 
 const defaultConfig = {
   stage,
-  env: process.env.NODE_ENV,
-  port: 3001,
   secrets: {
     jwt: process.env.JWT_SECRET,
     dbUrl: process.env.DATABASE_URL,
@@ -18,10 +15,16 @@ const defaultConfig = {
 
 let envConfig;
 
+console.log(`stage: ${stage}`);
+
 if (stage === "production") {
-  envConfig = prod;
+  envConfig = prod.default;
 } else {
-  envConfig = local;
+  envConfig = local.default;
 }
 
-export default merge(defaultConfig, envConfig);
+const mergedConfig = merge(defaultConfig, envConfig);
+
+console.log(mergedConfig);
+
+export default mergedConfig;
