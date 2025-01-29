@@ -15,8 +15,6 @@ const defaultConfig = {
 
 let envConfig;
 
-console.log(`stage: ${stage}`);
-
 if (stage === "production") {
   envConfig = prod.default;
 } else {
@@ -24,7 +22,5 @@ if (stage === "production") {
 }
 
 const mergedConfig = merge(defaultConfig, envConfig);
-
-console.log(mergedConfig);
 
 export default mergedConfig;
