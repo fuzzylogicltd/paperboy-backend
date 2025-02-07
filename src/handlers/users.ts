@@ -38,8 +38,8 @@ export const signIn = async (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
+    secure: false,
+    sameSite: "None",
   });
 
   res.json("Authentication success");
