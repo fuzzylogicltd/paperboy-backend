@@ -20,6 +20,12 @@ export const signIn = async (req, res) => {
     },
   });
 
+  if (!user) {
+    res.status(401);
+    res.json({ message: "Unauthorized" });
+    return;
+  }
+
   const isValid = await comparePasswords(req.body.password, user.password);
 
   if (!isValid) {
