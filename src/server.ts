@@ -1,14 +1,25 @@
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import express from "express";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 
 import router from "./router";
 import { createNewUser, signIn } from "./handlers/users";
 import { protect } from "./modules/auth";
 
 const app = express();
+
+const accessLogStream = fs.createWriteStream(
+  path.join(path.dirname(fileURLToPath(import.meta.url)), "access.log"),
+  { flags: "a" }
+);
+app.use(morgan("combined", { stream: accessLogStream }));
+
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev"));
 
 app.get("/", (req, res) => {
   res.status(200);

@@ -20,7 +20,7 @@ export const createJWT = (user) => {
 };
 
 export const protect = (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.cookies?.token;
 
   if (!token) {
     res.status(401);
