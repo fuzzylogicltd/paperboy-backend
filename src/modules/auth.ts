@@ -20,11 +20,19 @@ export const createJWT = (user) => {
 };
 
 export const protect = (req, res, next) => {
-  const token = req.cookies?.token;
+  const bearer = req.headers.authorization;
+
+  if (!bearer) {
+    res.status(401);
+    res.json({ message: "Not authorized" });
+    return;
+  }
+
+  const [, token] = bearer.split(" ");
 
   if (!token) {
     res.status(401);
-    res.json({ message: "not valid token" });
+    res.json({ message: "Invalid token" });
     return;
   }
 
@@ -34,6 +42,6 @@ export const protect = (req, res, next) => {
     next();
   } catch (e) {
     res.status(401);
-    res.json({ message: "not valid token" });
+    res.json({ message: "Invalid token" });
   }
 };

@@ -35,12 +35,6 @@ export const signIn = async (req, res) => {
   }
 
   const token = createJWT(user);
-
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "None",
-  });
-
-  res.json("Authentication success");
+  res.status(200);
+  res.json({ access_token: token });
 };
