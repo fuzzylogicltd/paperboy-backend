@@ -37,7 +37,7 @@ export const signIn = async (req, res) => {
   const token = createJWT(user);
 
   res.cookie("token", token, {
-    httpOnly: false,
+    httpOnly: true,
     secure: false,
     sameSite: "None",
   });
