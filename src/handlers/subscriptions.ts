@@ -6,11 +6,11 @@ export const getAllSubscriptions = async (req, res) => {
       userId: req.user.id,
     },
     select: {
-      feedId: true,
       tags: true,
       customFeedName: true,
       feed: {
         select: {
+          id: true,
           name: true,
           url: true,
         },
