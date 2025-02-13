@@ -34,7 +34,7 @@ model Subscription {
 
   customFeedName String?
   tags String?
-  subscribedFrom DateTime?
+  subscribedFrom DateTime
 
   user User @relation(fields: [userId], references: [id])
   feed Feed @relation(fields: [feedId], references: [id])
