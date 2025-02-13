@@ -9,6 +9,11 @@ export const populateOneFeed = async (req, res, next) => {
   const feed = await prisma.feed.findFirst({
     where: {
       id: feedId,
+      subscriptions: {
+        some: {
+          userId: req.user.id,
+        },
+      },
       OR: [
         {
           lastFetched: {
@@ -19,7 +24,6 @@ export const populateOneFeed = async (req, res, next) => {
           lastFetched: null,
         },
       ],
-      // TODO: check if user is subbed to that feed?
     },
     select: {
       url: true,
