@@ -35,16 +35,24 @@ export const populateOneFeed = async (req, res, next) => {
     },
   });
 
-  if (feed) {
-    const newArticles = await fetchArticlesFromRSS(feed.url, feedId);
-
-    await prisma.article.createMany({
-      data: newArticles,
-      skipDuplicates: true,
-    });
-
-    updateLastFetchedDate(feedId);
+  if (!feed) {
+    next();
+    return;
   }
+
+  const newArticles = await fetchArticlesFromRSS(feed.url, feedId);
+
+  if (!newArticles) {
+    next();
+    return;
+  }
+
+  await prisma.article.createMany({
+    data: newArticles,
+    skipDuplicates: true,
+  });
+
+  updateLastFetchedDate(feedId);
 
   next();
 };
@@ -91,22 +99,26 @@ export const populateManyFeeds = async (req, res, next) => {
 };
 
 async function fetchArticlesFromRSS(url: string, feedId: number) {
-  const buffer = (await got(url)).body;
+  try {
+    const buffer = (await got(url)).body;
 
-  const feed = parseFeed(buffer);
+    const feed = parseFeed(buffer);
 
-  const formattedItems = feed.items.map((item) => {
-    return {
-      feedId: feedId,
-      title: item.title.toString(),
-      url: item.url,
-      description: item.description,
-      datePublished: new Date(item.updated),
-      body: item.content,
-    };
-  });
+    const formattedItems = feed.items.map((item) => {
+      return {
+        feedId: feedId,
+        title: item.title.toString(),
+        url: item.url,
+        description: item.description,
+        datePublished: new Date(item.updated),
+        body: item.content ?? "",
+      };
+    });
 
-  return formattedItems;
+    return formattedItems;
+  } catch (error) {
+    return null;
+  }
 }
 
 async function updateLastFetchedDate(feedId) {
