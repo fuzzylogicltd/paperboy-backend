@@ -14,7 +14,7 @@ export const createNewUser = async (req, res) => {
 };
 
 export const signIn = async (req, res) => {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: {
       email: req.body.email,
       active: true,
