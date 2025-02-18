@@ -13,6 +13,7 @@ model User {
 
   email String    @unique
   password String
+  active Boolean @default(false)
   subscriptions Subscription[]
   reads Read[]
 }

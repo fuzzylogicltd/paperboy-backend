@@ -17,6 +17,7 @@ export const signIn = async (req, res) => {
   const user = await prisma.user.findUnique({
     where: {
       email: req.body.email,
+      active: true,
     },
   });
 
