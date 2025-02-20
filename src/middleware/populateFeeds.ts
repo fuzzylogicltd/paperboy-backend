@@ -91,6 +91,10 @@ export const populateManyFeeds = async (req, res, next) => {
   feeds.forEach(async (feed) => {
     const newArticles = await fetchArticlesFromRSS(feed.url, feed.id);
 
+    if (!newArticles) {
+      return;
+    }
+
     await prisma.article.createMany({
       data: newArticles,
       skipDuplicates: true,
@@ -116,6 +120,8 @@ async function fetchArticlesFromRSS(url: string, feedId: number) {
         description: item.description,
         datePublished: new Date(item.updated),
         body: item.content ?? "",
+        imageUrl: item.image.url,
+        author: item.authors.toString(),
       };
     });
 

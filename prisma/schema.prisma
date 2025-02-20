@@ -54,6 +54,7 @@ model Article {
   body String
   description String?
   imageUrl String?
+  author String?
 
   reads Read[]
 
