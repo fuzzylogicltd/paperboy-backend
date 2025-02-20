@@ -20,7 +20,20 @@ export const getAllArticles = async (req, res) => {
       userId: req.user.id,
     },
     include: {
-      article: true,
+      article: {
+        include: {
+          feed: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      article: {
+        datePublished: "desc",
+      },
     },
   });
 
@@ -52,7 +65,20 @@ export const getArticlesByFeed = async (req, res) => {
       },
     },
     include: {
-      article: true,
+      article: {
+        include: {
+          feed: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      article: {
+        datePublished: "desc",
+      },
     },
   });
 
