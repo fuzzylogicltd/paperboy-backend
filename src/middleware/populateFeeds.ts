@@ -2,7 +2,7 @@ import prisma from "../db";
 import got from "got";
 import { parseFeed } from "@rowanmanning/feed-parser";
 
-const FIVE_MINUTES_AGO = new Date(Date.now() - 5 * 60 * 1000);
+const FIVE_MINUTES_AGO = new Date(Date.now() - 0 * 60 * 1000);
 
 export const populateOneFeed = async (req, res, next) => {
   const feedId = Number(req.params.id);
@@ -46,6 +46,8 @@ export const populateOneFeed = async (req, res, next) => {
 
   const newArticles = await fetchArticlesFromRSS(feed.url, feedId);
 
+  updateLastFetchedDate(feedId);
+
   if (!newArticles) {
     next();
     return;
@@ -55,8 +57,6 @@ export const populateOneFeed = async (req, res, next) => {
     data: newArticles,
     skipDuplicates: true,
   });
-
-  updateLastFetchedDate(feedId);
 
   next();
 };
@@ -91,6 +91,8 @@ export const populateManyFeeds = async (req, res, next) => {
   feeds.forEach(async (feed) => {
     const newArticles = await fetchArticlesFromRSS(feed.url, feed.id);
 
+    updateLastFetchedDate(feed.id);
+
     if (!newArticles) {
       return;
     }
@@ -99,8 +101,6 @@ export const populateManyFeeds = async (req, res, next) => {
       data: newArticles,
       skipDuplicates: true,
     });
-
-    updateLastFetchedDate(feed.id);
   });
 
   next();
@@ -120,8 +120,8 @@ async function fetchArticlesFromRSS(url: string, feedId: number) {
         description: item.description,
         datePublished: new Date(item.updated),
         body: item.content ?? "",
-        imageUrl: item.image.url,
-        author: item.authors.toString(),
+        imageUrl: item.image?.url,
+        author: item.authors.map((author) => author.name).toString(), // TODO: confirm this works now
       };
     });
 
