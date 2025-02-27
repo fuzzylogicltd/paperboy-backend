@@ -99,7 +99,15 @@ export const getArticle = async (req, res) => {
       articleId: articleId,
     },
     include: {
-      article: true,
+      article: {
+        include: {
+          feed: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
 
