@@ -2,7 +2,7 @@ import prisma from "../db";
 import got from "got";
 import { parseFeed } from "@rowanmanning/feed-parser";
 
-const FIVE_MINUTES_AGO = new Date(Date.now() - 0 * 60 * 1000);
+const FIVE_MINUTES_AGO = new Date(Date.now() - 5 * 60 * 1000);
 
 export const populateOneFeed = async (req, res, next) => {
   const feedId = Number(req.params.id);
