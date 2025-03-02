@@ -8,9 +8,9 @@ The backend is a REST API NodeJS app, using Express and the Prisma ORM. The data
 
 To understand the data structure in detail take a look at the `prisma/schema.prisma` file. But in short, everything revolves around Users, Feeds and Articles.
 
-A User can create a Subscription to a Feed, which is their own "instance" of that Feed, since many users could be following the same feed, so it's a many-to-many relationship. This also offers options for each user to customize their feed a bit, with custom names and tags (tags still need to be implemented on the frontend).
+A User can create a Subscription to a Feed, which is their own "instance" of that Feed, since many users could be following the same feed, so it's a many-to-many relationship. This also offers options for each user to customize their feed a bit, with custom names and tags.
 
-Each Feed has a bunch of Articles that have been fetched from it over time.
+Each Feed is linked to a bunch of Articles that have been fetched from it over time.
 
 Users are also linked to Reads, which are similarly "instances" of Articles relative to them. That way we can show if they've been read and when, if they've been saved to favorites etc.
 

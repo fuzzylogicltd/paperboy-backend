@@ -127,7 +127,7 @@ export const updateArticle = async (req, res) => {
     },
     data: {
       starred: req.body.starred,
-      readOn: null,
+      readOn: new Date(Date.now()),
     },
   });
 
