@@ -1,6 +1,5 @@
 import prisma from "../db";
-import got from "got";
-import { parseFeed } from "@rowanmanning/feed-parser";
+import { fetchArticlesFromRSS } from "../modules/fetchRss";
 
 const FIVE_MINUTES_AGO = new Date(Date.now() - 5 * 60 * 1000);
 
@@ -105,31 +104,6 @@ export const populateManyFeeds = async (req, res, next) => {
 
   next();
 };
-
-async function fetchArticlesFromRSS(url: string, feedId: number) {
-  try {
-    const buffer = (await got(url)).body;
-
-    const feed = parseFeed(buffer);
-
-    const formattedItems = feed.items.map((item) => {
-      return {
-        feedId: feedId,
-        title: item.title.toString(),
-        url: item.url,
-        description: item.description,
-        datePublished: new Date(item.updated),
-        body: item.content ?? "",
-        imageUrl: item.image?.url,
-        author: item.authors.map((author) => author.name).toString(), // TODO: confirm this works now
-      };
-    });
-
-    return formattedItems;
-  } catch (error) {
-    return null;
-  }
-}
 
 async function updateLastFetchedDate(feedId) {
   await prisma.feed.update({
