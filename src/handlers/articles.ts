@@ -5,6 +5,8 @@ const ITEMS_PER_PAGE = 10;
 export const getAllArticles = async (req, res) => {
   const queryPageCursor = Number(req.query.pageCursor);
   const pageCursor = queryPageCursor ?? 0;
+  const starred = req.query.starred ?? null;
+  const read = req.query.read ?? null;
 
   const reads = await prisma.read.findMany({
     take: ITEMS_PER_PAGE,
@@ -19,6 +21,8 @@ export const getAllArticles = async (req, res) => {
     }),
     where: {
       userId: req.user.id,
+      ...(starred !== null && { starred: starred === "true" }),
+      ...(read !== null && { readOn: read === "true" ? { not: null } : null }),
     },
     include: {
       article: {
@@ -48,6 +52,8 @@ export const getArticlesByFeed = async (req, res) => {
   const feedId = Number(req.params.id);
   const queryPageCursor = Number(req.query.pageCursor);
   const pageCursor = queryPageCursor ?? 0;
+  const starred = req.query.starred ?? null;
+  const read = req.query.read ?? null;
 
   const reads = await prisma.read.findMany({
     take: ITEMS_PER_PAGE,
@@ -65,6 +71,8 @@ export const getArticlesByFeed = async (req, res) => {
       article: {
         feedId: feedId,
       },
+      ...(starred !== null && { starred: starred === "true" }),
+      ...(read !== null && { readOn: read === "true" ? { not: null } : null }),
     },
     include: {
       article: {
