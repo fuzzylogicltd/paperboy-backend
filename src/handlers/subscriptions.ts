@@ -36,7 +36,7 @@ export const getAllSubscriptions = async (req, res) => {
 
   const subscriptionsWithUnreadCount = subscriptions.map((subscription) => ({
     ...subscription,
-    unreadArticles: subscription.feed._count.articles,
+    unreadCount: subscription.feed._count.articles,
   }));
 
   res.status(200);
