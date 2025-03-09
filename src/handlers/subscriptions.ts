@@ -13,13 +13,34 @@ export const getAllSubscriptions = async (req, res) => {
           id: true,
           name: true,
           url: true,
+          _count: {
+            select: {
+              articles: {
+                where: {
+                  reads: {
+                    none: {
+                      userId: req.user.id,
+                      readOn: {
+                        not: null,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },
   });
 
+  const subscriptionsWithUnreadCount = subscriptions.map((subscription) => ({
+    ...subscription,
+    unreadArticles: subscription.feed._count.articles,
+  }));
+
   res.status(200);
-  res.json({ data: subscriptions });
+  res.json({ data: subscriptionsWithUnreadCount });
 };
 
 export const addSubscription = async (req, res) => {
