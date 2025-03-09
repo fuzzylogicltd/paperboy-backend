@@ -24,7 +24,9 @@ export const getAllArticles = async (req, res) => {
       ...(starred !== null && { starred: starred === "true" }),
       ...(read !== null && { readOn: read === "true" ? { not: null } : null }),
     },
-    include: {
+    select: {
+      starred: true,
+      readOn: true,
       article: {
         include: {
           feed: {
@@ -42,10 +44,19 @@ export const getAllArticles = async (req, res) => {
     },
   });
 
-  const lastPostInResults = reads[ITEMS_PER_PAGE - 1];
+  const formattedReads = reads.map((read) => ({
+    starred: read.starred,
+    read: !!read.readOn,
+    article: read.article,
+  }));
+
+  const lastPostInResults = formattedReads[ITEMS_PER_PAGE - 1];
 
   res.status(200);
-  res.json({ data: reads, pageCursor: lastPostInResults?.articleId ?? null });
+  res.json({
+    data: formattedReads,
+    pageCursor: lastPostInResults?.articleId ?? null,
+  });
 };
 
 export const getArticlesByFeed = async (req, res) => {
@@ -74,7 +85,9 @@ export const getArticlesByFeed = async (req, res) => {
       ...(starred !== null && { starred: starred === "true" }),
       ...(read !== null && { readOn: read === "true" ? { not: null } : null }),
     },
-    include: {
+    select: {
+      starred: true,
+      readOn: true,
       article: {
         include: {
           feed: {
@@ -92,10 +105,19 @@ export const getArticlesByFeed = async (req, res) => {
     },
   });
 
-  const lastPostInResults = reads[ITEMS_PER_PAGE - 1];
+  const formattedReads = reads.map((read) => ({
+    starred: read.starred,
+    read: !!read.readOn,
+    article: read.article,
+  }));
+
+  const lastPostInResults = formattedReads[ITEMS_PER_PAGE - 1];
 
   res.status(200);
-  res.json({ data: reads, pageCursor: lastPostInResults?.articleId ?? null });
+  res.json({
+    data: formattedReads,
+    pageCursor: lastPostInResults?.articleId ?? null,
+  });
 };
 
 export const getArticle = async (req, res) => {
