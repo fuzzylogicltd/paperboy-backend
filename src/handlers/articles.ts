@@ -55,7 +55,7 @@ export const getAllArticles = async (req, res) => {
   res.status(200);
   res.json({
     data: formattedReads,
-    pageCursor: lastPostInResults?.articleId ?? null,
+    pageCursor: lastPostInResults?.article.id ?? null,
   });
 };
 
@@ -116,7 +116,7 @@ export const getArticlesByFeed = async (req, res) => {
   res.status(200);
   res.json({
     data: formattedReads,
-    pageCursor: lastPostInResults?.articleId ?? null,
+    pageCursor: lastPostInResults?.article.id ?? null,
   });
 };
 
