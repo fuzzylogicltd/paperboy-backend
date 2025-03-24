@@ -37,11 +37,10 @@ export const getAllArticles = async (req, res) => {
         },
       },
     },
-    orderBy: {
-      article: {
-        datePublished: "desc",
-      },
-    },
+    orderBy:
+      read === "true"
+        ? { readOn: "desc" }
+        : { article: { datePublished: "desc" } },
   });
 
   const formattedReads = reads.map((read) => ({
