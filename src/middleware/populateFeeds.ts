@@ -1,9 +1,9 @@
 import prisma from "../db";
 import { fetchArticlesFromRSS } from "../modules/fetchRss";
 
-const FIVE_MINUTES_AGO = new Date(Date.now() - 5 * 60 * 1000);
-
 export const populateOneFeed = async (req, res, next) => {
+  const FIVE_MINUTES_AGO = new Date(Date.now() - 5 * 60 * 1000);
+
   const feedId = Number(req.params.id);
   const feed = await prisma.feed.findFirst({
     where: {
@@ -61,6 +61,8 @@ export const populateOneFeed = async (req, res, next) => {
 };
 
 export const populateManyFeeds = async (req, res, next) => {
+  const FIVE_MINUTES_AGO = new Date(Date.now() - 5 * 60 * 1000);
+
   const feeds = await prisma.feed.findMany({
     where: {
       subscriptions: {
