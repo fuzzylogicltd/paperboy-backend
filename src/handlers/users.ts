@@ -35,7 +35,7 @@ export const createNewUser = async (req, res) => {
   const subject = "Please activate your account";
   const templateName = "activate";
   const payload = {
-    userName: "Lazar",
+    userName: "",
     activationUrl: activationUrl,
   };
 
