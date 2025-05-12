@@ -31,7 +31,7 @@ export const createNewUser = async (req, res) => {
 
   const activationUrl = appUrl + "/user/activate/" + activationCode;
 
-  const recipient = "lazar@fuzzylogic.ltd";
+  const recipient = req.body.email;
   const subject = "Please activate your account";
   const templateName = "activate";
   const payload = {
