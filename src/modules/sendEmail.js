@@ -1,7 +1,10 @@
+// This file is not in TS to avoid this issue: https://github.com/mailgun/mailgun.js/issues/409
+
 import fs from "fs";
 import ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
+import FormData from "node-fetch";
 import Mailgun from "mailgun.js";
 
 import config from "../config";
@@ -10,10 +13,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default async function sendEmail(
-  recipient: string,
-  subject: string,
-  templateName: string,
-  payload: object
+  recipient,
+  subject,
+  templateName,
+  payload
 ) {
   const templatePath = path.join(
     __dirname,
